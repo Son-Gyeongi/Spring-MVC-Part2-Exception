@@ -18,7 +18,7 @@ public class ServletExController {
     public void errorEx() {
         // 그냥 예외 던지자
         throw new RuntimeException("예외 발생!");
-        // Exception 터진거는 무조건 500으로 나간다.
+        // Exception 예외 터진거는 무조건 상태코드 500으로 나간다.
     }
     // 2. response.sendError(HTTP 상태 코드, 오류 메시지) 호출
     // sendError는 상태코드 지정할 수 있다. 오류메시지는 default로 숨겨져서 안 보인다.
@@ -29,5 +29,11 @@ public class ServletExController {
     @GetMapping("/error-500")
     public void error500(HttpServletResponse response) throws IOException {
         response.sendError(500);
+    }
+
+    // 스프링 부트 - 오류 페이지1
+    @GetMapping("/error-400")
+    public void error400(HttpServletResponse response) throws IOException {
+        response.sendError(400, "400 오류!");
     }
 }
