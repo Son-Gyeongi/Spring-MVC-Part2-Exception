@@ -12,6 +12,22 @@
   <div>
     <p>오류 화면 입니다.</p>
   </div>
+<!--  스프링 부트 - 오류 페이지2, 오류 정보 추가
+      BasicErrorController 컨트롤러가 model에 담아서 넘겨주는 값들이다. -->
+  <ul>
+    <li>오류 정보</li>
+    <ul>
+      <li th:text="|timestamp: ${timestamp}|"></li>
+      <li th:text="|path: ${path}|"></li>
+      <li th:text="|status: ${status}|"></li>
+      <li th:text="|message: ${message}|"></li>
+      <li th:text="|error: ${error}|"></li>
+      <li th:text="|exception: ${exception}|"></li>
+      <li th:text="|errors: ${errors}|"></li>
+      <li th:text="|trace: ${trace}|"></li>
+    </ul>
+    </li>
+  </ul>
   <hr class="my-4">
 </div> <!-- /container -->
 </body>
