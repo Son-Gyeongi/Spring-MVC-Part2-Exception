@@ -1,11 +1,17 @@
 package hello.exception.servlet;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 // 서블릿 예외 처리 - 오류 화면 제공
 // 오류 화면을 보여주기 위한 컨트롤러
@@ -46,5 +52,34 @@ public class ErrorPageController {
         log.info("ERROR_SERVLET_NAME: {}", request.getAttribute(ERROR_SERVLET_NAME));
         log.info("ERROR_STATUS_CODE: {}", request.getAttribute(ERROR_STATUS_CODE));
         log.info("dispatcherType= {}", request.getDispatcherType()); // 중요
+    }
+
+    // API 예외 처리 - 시작
+    /**
+     * 클라이언트는 정상 요청이든, 오류 요청이든 json이 반환되기를 기대한다.
+     * 문제를 해결하려면 오류 페이지 컨트롤러도 json응답을 할 수 있도록 수정해야 한다.
+     *
+     * 클라이언트가 보내는 Accept(클라이언트가 받을 수 있는 데이터 타입) 타입에 따라서 "/error-page/500" 같은 url 이더라도
+     * 클라이언트가 보내는 타입이 application/json인 경우 APPLICATION_JSON_VALUE가 우선순위 먼저이다.
+     *
+     * 서블릿 기본 오류 페이지 동작 메커니즘을 가지고 서블릿에 오류 페이지 등록(WebServerCustomizer)해서
+     * api 오류를 어떻게 해결할 수 있는지에 대해서 알아보았다.
+     */
+    @RequestMapping(value = "/error-page/500", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> errorPage500Api(
+            HttpServletRequest request, HttpServletResponse response) {
+        // json 반환 ResponseEntity
+
+        log.info("API errorPage 500");
+
+        Map<String, Object> result = new HashMap<>(); // HashMap 순서 보장하지 않음
+        Exception ex = (Exception) request.getAttribute(ERROR_EXCEPTION);
+        result.put("status", request.getAttribute(ERROR_STATUS_CODE));
+        result.put("message", ex.getMessage()); // 예외 메시지
+
+        Integer statusCode = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);// Http 오류 상태 코드
+
+        // json이니깐 ResponseEntity는 http 응답 바디에 데이터를 바로 쏘는 거다.
+        return new ResponseEntity<>(result, HttpStatus.valueOf(statusCode));
     }
 }
