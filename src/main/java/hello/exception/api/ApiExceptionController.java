@@ -16,9 +16,15 @@ public class ApiExceptionController {
     // MemberDto 반환하는 API 만들기
     @GetMapping("/api/members/{id}")
     public MemberDto getMember(@PathVariable("id") String id) {
+
         if (id.equals("ex")) {
             throw new RuntimeException("잘못된 사용자");
         }
+        // IllegalArgumentException을 400에러로 처리, API 예외 처리 - HandlerExceptionResolver 시작
+        if (id.equals("bad")) {
+            throw new IllegalArgumentException("잘못된 입력 값");
+        }
+
 
         return new MemberDto(id, "hello " + id);
     }
