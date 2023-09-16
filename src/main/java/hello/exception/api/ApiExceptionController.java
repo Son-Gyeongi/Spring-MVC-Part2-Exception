@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -47,6 +48,12 @@ public class ApiExceptionController {
     public String responseStatusEx2() {
         // 상태코드랑 오류 메시지까지 한번에 해결할 수 있는 ResponseStatusException()
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error.bad", new IllegalArgumentException()); // 에러 404
+    }
+
+    // API 예외 처리 - 스프링이 제공하는 ExceptionResolver2 (DefaultHandlerExceptionResolver)
+    @GetMapping("/api/default-handler-ex")
+    public String defaultException(@RequestParam Integer data) {
+        return "ok";
     }
 
     @Data
